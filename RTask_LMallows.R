@@ -44,7 +44,7 @@ my.titanic$Embarked = as.numeric(my.titanic$Embarked)
 # Recursive Partitioning and Regression Trees
 library(rpart)
 
-fit = rpart(Survived ~ Pclass + Sex + Age + SibSp + Parch + Embarked, data=train)
+fit = rpart(Survived ~ Pclass + Sex + Age + SibSp + Parch + Fare + Embarked, data=train)
 
 # fit = rpart(Survived ~ Pclass + Sex + Age, data=train)
 
@@ -59,11 +59,10 @@ text(fit, cex = 0.7,pos = 2)
 
 fit$variable.importance
 
-# Variable importance
-#       Sex    Pclass       Age     Parch  Embarked     SibSp 
-# 44.896279 13.815703  6.984766  3.577126  2.652066  1.328989
+#       Sex      Fare    Pclass       Age     Parch     SibSp  Embarked 
+# 44.896279 25.600646 12.210541  9.240344  5.799570  5.631461  3.221121
 
-# Sex appears to be the most important variable in the model, followed by Pclass and Age
+# Sex appears to be the most important variable in the model, followed by Fare, Pclass and Age
 
 # 5.	Now, test the model on the test partition.
 
@@ -79,7 +78,7 @@ pre =ifelse(pre<0.5, 0, 1)
 
 table(pre)
 #   0   1 
-# 209  59 
+# 189  79 
 table(test$Survived)
 #   0   1 
 # 180  88 
@@ -94,11 +93,11 @@ temp = confusionMatrix(reference = test$Survived,data = pre)
 temp$table
 #           Reference
 # Prediction   0   1
-#          0 173  36
-#          1   7  52
+#          0 162  27
+#          1  18  61
 
-# From this table we can see that 209 passengers are predicted to die, and 59 to survive.
-# However, the test data shows that 180 die, and 88 survive, with 43 passengers misclassified as
+# From this table we can see that 189 passengers are predicted to die, and 79 to survive.
+# However, the test data shows that 180 die, and 88 survive, with 45 passengers misclassified as
 # either false positive or false negative.
 
 misclassified = (pre != test$Survived)
@@ -108,7 +107,7 @@ sum(misclassified)
 misclassError = mean(misclassified)
 print(paste(("Accuracy = "), 1-misclassError))
 
-# [1] "Accuracy =  0.83955223880597"
+# [1] "Accuracy =  0.832089552238806"
 
 # 7.	Use your model to predict the survival of passengers in the predict.csv dataset (score the file) and save your results in the same file.
 
@@ -126,7 +125,7 @@ PredSurvived = ifelse(finalpre<0.5, 0, 1)
 table(PredSurvived)
 # PredSurvived
 #   0   1 
-# 185 115 
+# 173 127 
 
 # We can then add the results to the predict data and write it into a .csv file
 
